@@ -4,7 +4,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git://github.com/gomoob/php-pushwoosh.git"
+    "url": "git://github.com/rsgrey/php-pushwoosh.git"
   },
   "devDependencies": {
     "grunt": "^1.0.1",
