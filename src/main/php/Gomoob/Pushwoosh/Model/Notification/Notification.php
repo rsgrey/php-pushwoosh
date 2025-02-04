@@ -268,6 +268,16 @@ class Notification implements \JsonSerializable
     private $users;
 
     /**
+     * The date when the message has to be sent, if a string is provided it must respect the following formats :
+     *     - 'now'                : To indicate the message has to be sent when "now".
+     *  - 'YYYY-MM-DD HH:mm    : Specify your own send date.
+     *
+     * The value of this property is "now" by default.
+     *
+     * @var \DateTime | string
+     */
+    private $inboxDate;
+    /**
      * Utility function used to create a new notification.
      *
      * @return \Gomoob\Pushwoosh\Model\Notification\Notification the new created notification.
@@ -667,6 +677,18 @@ class Notification implements \JsonSerializable
     }
 
     /**
+     * Gets the date when to remove a message from the Inbox., if a string is provided it must respect the following formats :
+     *  - 'YYYY-MM-DD    : Specify your own inbox date.
+     *
+     * @return \DateTime | string the date when to remove a message from the Inbox., the returned value is a PHP DateTime or the
+     *         string "now".
+     */
+    public function getInboxDate()
+    {
+        return $this->inboxDate;
+    }
+
+    /**
      * Creates a JSON representation of this request.
      *
      * @return array a PHP which can be passed to the 'json_encode' PHP method.
@@ -678,6 +700,7 @@ class Notification implements \JsonSerializable
         // Mandatory parameters
         $json['ignore_user_timezone'] = $this->ignoreUserTimezone;
         $json['send_date'] = is_string($this->sendDate) ? $this->sendDate : $this->sendDate->format('Y-m-d H:i');
+        $json['inbox_date'] = is_string($this->inboxDate) ? $this->inboxDate : $this->inboxDate->format('Y-m-d');
     
         // Optional parameters
         isset($this->campain) ? $json['campaign'] = $this->campain : false;
@@ -1192,6 +1215,35 @@ class Notification implements \JsonSerializable
     public function setUsers($users)
     {
         $this->users = $users;
+
+        return $this;
+    }
+
+
+    /**
+     * Sets the date when to remove a message from the Inbox, if a string is provided it must respect the following formats :
+     *  - 'YYYY-MM-DD    : Specify your own send date.
+     *
+     * @param \DateTime | string $inboxDate the date when to remove a message from the Inbox..
+     *
+     * @return \Gomoob\Pushwoosh\Model\Notification\Notification this instance.
+     */
+    public function setInboxDate(/* \DateTime */ $inboxDate)
+    {
+        // Try to parse a string date
+        if (is_string($inboxDate)) {
+            $newInboxDate = \DateTime::createFromFormat('Y-m-d', $inboxDate);
+
+            // The provided send date string is invalid
+            if ($newInboxDate === false) {
+                throw new PushwooshException('Invalid inbox date provided !');
+            }
+
+            $this->inboxDate = $newInboxDate;
+        }
+        else{
+            throw new PushwooshException('Invalid inbox date provided !');
+        }
 
         return $this;
     }
