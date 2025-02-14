@@ -700,7 +700,7 @@ class Notification implements \JsonSerializable
         // Mandatory parameters
         $json['ignore_user_timezone'] = $this->ignoreUserTimezone;
         $json['send_date'] = is_string($this->sendDate) ? $this->sendDate : $this->sendDate->format('Y-m-d H:i');
-        $json['inbox_date'] = is_string($this->inboxDate) ? $this->inboxDate : $this->inboxDate->format('Y-m-d');
+        $json['inbox_date'] = (!empty($this->inboxDate)) ? $this->inboxDate->format('Y-m-d') : null;
     
         // Optional parameters
         isset($this->campain) ? $json['campaign'] = $this->campain : false;
